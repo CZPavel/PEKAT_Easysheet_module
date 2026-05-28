@@ -1,0 +1,21 @@
+{
+  "project_id": "Camera_1",
+  "frame_id": "Camera_1_000001",
+  "timestamp": "2026-05-28T12:00:00Z",
+  "mode": "sync",
+  "context": {
+    "result": true,
+    "detectedRectangles": [
+      {
+        "label": "Screw",
+        "confidence": 0.98,
+        "detectedAsLast": true
+      }
+    ]
+  },
+  "global_data": {
+    "recipe": {
+      "active_id": "A"
+    }
+  }
+}

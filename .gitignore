@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.env
+.env.*
+
+# Build artefacts
+build/
+dist/
+*.egg-info/
+
+# Local runtime data
+*.db
+*.sqlite
+*.sqlite3
+logs/
+run/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Codex sensitive state - never commit
+.codex/auth.json
+.codex/tmp/
+.codex/models_cache.json
+.codex/skills/
