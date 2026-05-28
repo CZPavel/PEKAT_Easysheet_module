@@ -63,10 +63,37 @@ def get_last_snapshot(project_id: str) -> SnapshotRecord:
 
 @router.post("/api/evaluate", response_model=EvaluateResponse)
 def evaluate(payload: EvaluateRequest) -> EvaluateResponse:
-    """Ulo?? snapshot a vr?t? deterministick? MVP v?sledek."""
+    """Ulo?? snapshot a vr?t? v?sledek workbooku pro PEKAT Code bridge."""
 
     store.save_snapshot(payload)
-    return evaluator.evaluate(payload)
+    contexts: dict[str, dict[str, object]] = {}
+    for project in store.list_projects():
+        snapshot = store.get_last_snapshot(project.project_id)
+        if snapshot is not None:
+            contexts[project.project_id] = {
+                "context": snapshot.context,
+                "global_data": snapshot.global_data,
+            }
+    contexts[payload.project_id] = {
+        "context": payload.context,
+        "global_data": payload.global_data,
+    }
+    workbook_result = workbook_service.evaluate(contexts)
+    fallback = evaluator.evaluate(payload)
+    context_updates = fallback.context_updates | workbook_result.context_updates
+    fallback_sheet = fallback.context_updates.get("spreadsheet")
+    workbook_sheet = workbook_result.context_updates.get("spreadsheet")
+    if isinstance(fallback_sheet, dict) and isinstance(workbook_sheet, dict):
+        context_updates["spreadsheet"] = fallback_sheet | workbook_sheet
+    global_updates = fallback.global_updates | workbook_result.global_updates
+    spreadsheet = context_updates.get("spreadsheet", {})
+    ok = bool(spreadsheet.get("master_result", fallback.ok)) if isinstance(spreadsheet, dict) else fallback.ok
+    return EvaluateResponse(
+        ok=ok,
+        context_updates=context_updates,
+        global_updates=global_updates,
+        control=workbook_result.control,
+    )
 
 
 @router.get("/api/projects", response_model=list[ProjectRecord])

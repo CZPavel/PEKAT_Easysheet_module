@@ -89,3 +89,12 @@ python -m pip install -e ".[dev]"
 cd ui
 npm install
 ```
+
+
+## Dokumentace
+
+- `docs/USER_GUIDE.md` - praktick? u?ivatelsk? n?vod.
+- `docs/FUNCTIONS.md` - vysv?tlen? funkc?, vzorc? a write-back mapov?n?.
+- `docs/WORKBOOK_MODEL.md` - datov? model workbooku.
+- `docs/LOGIC_REVIEW.md` - kontrola souladu aplikace s p?vodn? my?lenkou.
+- `docs/DEVELOPMENT_ROADMAP.md` - dal?? pl?n v?voje.

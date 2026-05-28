@@ -79,13 +79,29 @@ def _post_json(url: str, payload: dict[str, Any], timeout_s: float) -> dict[str,
     return json.loads(body)
 
 
+def _deep_merge(target: dict[str, Any], updates: dict[str, Any]) -> None:
+    """Rekurzivn? slou?? slovn?kov? aktualizace bez zm?ny existuj?c?ch typ?."""
+
+    for key, value in updates.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            _deep_merge(target[key], value)
+        else:
+            target[key] = value
+
+
 def _apply_response(context: dict[str, Any], response: dict[str, Any]) -> None:
     """Zap??e odpov?? backendu zp?t do PEKAT Contextu."""
 
     updates = response.get("context_updates") or {}
     if isinstance(updates, dict):
-        for key, value in updates.items():
-            context[key] = value
+        _deep_merge(context, updates)
+
+    global_updates = response.get("global_updates") or {}
+    if isinstance(global_updates, dict) and global_updates:
+        global_key = "global_data" if "globalData" not in context else "globalData"
+        if not isinstance(context.get(global_key), dict):
+            context[global_key] = {}
+        _deep_merge(context[global_key], global_updates)
 
     control = response.get("control") or {}
     if isinstance(control, dict):

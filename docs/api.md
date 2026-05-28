@@ -93,3 +93,17 @@ Odpov??:
 - `POST /api/workbooks/default/bindings`
 - `POST /api/workbooks/default/output-mappings`
 - `GET /api/context/{project_id}/tree`
+
+
+## Runtime evaluate semantics
+
+`POST /api/evaluate` je endpoint pro PEKAT Code bridge. Ulo?? p??choz? snapshot,
+sestav? dostupn? contexty projekt?, vyhodnot? default workbook a vr?t?:
+
+- `context_updates`: hodnoty pro z?pis do aktu?ln?ho PEKAT `context`,
+- `global_updates`: hodnoty pro z?pis do `global_data` / `globalData`,
+- `control.exit`: voliteln? ukon?en? v?tve,
+- `control.override_result`: voliteln? p?epis `context["result"]`.
+
+T?m endpoint odpov?d? p?vodn? my?lence: tabulka nen? jen dashboard, ale vrac?
+hodnoty zp?t do PEKAT FLOW.

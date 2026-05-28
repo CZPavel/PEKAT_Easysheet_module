@@ -77,9 +77,9 @@ class FormulaEngine:
         if name == "IF":
             return values[1] if len(values) >= 2 and bool(values[0]) else (values[2] if len(values) >= 3 else False)
         if name == "AND":
-            return all(bool(value) for value in values)
+            return all(value != MISSING and bool(value) for value in values)
         if name == "OR":
-            return any(bool(value) for value in values)
+            return any(value != MISSING and bool(value) for value in values)
         if name == "NOT":
             return not bool(values[0]) if values else True
         if name == "ABS":
