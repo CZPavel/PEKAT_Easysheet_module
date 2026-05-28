@@ -6,9 +6,11 @@ from fastapi import APIRouter, HTTPException, status
 
 from backend.app.core.evaluator import SpreadsheetEvaluator
 from backend.app.core.storage import MemoryStore
+from backend.app.demo.simulator import DemoSimulator
 from backend.app.models import (
     EvaluateRequest,
     EvaluateResponse,
+    DemoStateResponse,
     HealthResponse,
     ProjectRecord,
     ProjectRegistration,
@@ -19,6 +21,7 @@ from backend.app.models import (
 router = APIRouter()
 store = MemoryStore()
 evaluator = SpreadsheetEvaluator()
+demo_simulator = DemoSimulator(store=store, evaluator=evaluator)
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -61,3 +64,31 @@ def evaluate(payload: EvaluateRequest) -> EvaluateResponse:
 
     store.save_snapshot(payload)
     return evaluator.evaluate(payload)
+
+
+@router.get("/api/projects", response_model=list[ProjectRecord])
+def list_projects() -> list[ProjectRecord]:
+    """Vr?t? registrovan? PEKAT/demo projekty pro UI."""
+
+    return store.list_projects()
+
+
+@router.get("/api/demo/state", response_model=DemoStateResponse)
+def get_demo_state() -> dict[str, object]:
+    """Vr?t? aktu?ln? stav offline PEKAT simulatoru."""
+
+    return demo_simulator.state()
+
+
+@router.post("/api/demo/tick", response_model=DemoStateResponse)
+def tick_demo() -> dict[str, object]:
+    """Vygeneruje dal?? demo frame pro v?echny kamery."""
+
+    return demo_simulator.tick()
+
+
+@router.post("/api/demo/reset", response_model=DemoStateResponse)
+def reset_demo() -> dict[str, object]:
+    """Resetuje offline demo data do v?choz?ho stavu."""
+
+    return demo_simulator.reset()

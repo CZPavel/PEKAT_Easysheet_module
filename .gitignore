@@ -36,3 +36,9 @@ Thumbs.db
 .codex/tmp/
 .codex/models_cache.json
 .codex/skills/
+
+# Frontend
+node_modules/
+ui/node_modules/
+ui/dist/
+

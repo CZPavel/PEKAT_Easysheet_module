@@ -28,6 +28,12 @@ class MemoryStore:
             self._projects[record.project_id] = record
         return record
 
+    def list_projects(self) -> list[ProjectRecord]:
+        """Vr?t? v?echny registrovan? projekty se?azen? podle ID."""
+
+        with self._lock:
+            return [self._projects[key] for key in sorted(self._projects)]
+
     def get_project(self, project_id: str) -> ProjectRecord | None:
         """Vr?t? projekt, pokud byl registrov?n."""
 

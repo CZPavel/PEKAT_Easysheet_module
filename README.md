@@ -55,3 +55,17 @@ Podrobnosti jsou v `docs/api.md`.
 
 Prvn? verze nepou?t? libovoln? Python k?d ze vzorc?. Formula runtime je
 z?m?rn? omezen? a deterministick?, aby ?el auditovat pro pr?myslov? pou?it?.
+
+## React/Vite offline UI
+
+Aplikace um? b??et bez aktivn? PEKAT instance p?es vestav?n? simulator:
+
+```powershell
+uvicorn backend.app.main:app --reload
+cd ui
+npm install
+npm run dev
+```
+
+Pot? otev?i `http://127.0.0.1:5173` a pou?ij tla??tka `Start demo`,
+`Tick frame` a `Reset`.

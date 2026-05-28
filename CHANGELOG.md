@@ -2,6 +2,12 @@
 
 Form?t vych?z? z Conventional Commits.
 
+## Unreleased
+
+### Added
+- React/Vite offline UI pro n?hled bez PEKAT instance.
+- Offline PEKAT simulator s demo kamerami a tick endpointy.
+
 ## 0.1.0 - 2026-05-28
 
 ### Added

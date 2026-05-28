@@ -74,3 +74,11 @@ class EvaluateResponse(BaseModel):
     context_updates: dict[str, Any] = Field(default_factory=dict)
     global_updates: dict[str, Any] = Field(default_factory=dict)
     control: ControlResponse = Field(default_factory=ControlResponse)
+
+
+class DemoStateResponse(BaseModel):
+    """Voln? model pro offline simulator state pou??van? React UI."""
+
+    running: bool
+    tick_index: int
+    cameras: list[dict[str, Any]]
