@@ -83,3 +83,13 @@ Odpov??:
   "control": {"exit": false, "override_result": null}
 }
 ```
+
+
+## Workbook API
+
+- `GET /api/workbooks/default`
+- `PUT /api/workbooks/default`
+- `POST /api/workbooks/default/evaluate`
+- `POST /api/workbooks/default/bindings`
+- `POST /api/workbooks/default/output-mappings`
+- `GET /api/context/{project_id}/tree`

@@ -69,3 +69,23 @@ npm run dev
 
 Pot? otev?i `http://127.0.0.1:5173` a pou?ij tla??tka `Start demo`,
 `Tick frame` a `Reset`.
+
+
+## Spreadsheet mapping workspace
+
+Aktu?ln? UI je navr?en? jako extern? Cognex-like spreadsheet nad PEKAT Contextem:
+
+- vlevo hlavn? tabulka se z?lo?kami `Camera_1`, `Camera_2`, `Coordinator`, `Recipes`, `Outputs`,
+- vpravo PEKAT Context JSON strom,
+- drag-and-drop z Contextu do bu?ky vlo?? `=PV(...)`,
+- output mappings mapuj? vybran? bu?ky zp?t do `context_updates` a `global_updates`.
+
+### P?enos na jin? PC
+
+```powershell
+git clone https://github.com/CZPavel/PEKAT_Easysheet_module.git
+cd PEKAT_Easysheet_module
+python -m pip install -e ".[dev]"
+cd ui
+npm install
+```

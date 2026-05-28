@@ -44,3 +44,8 @@ context["spreadsheet"] <- context_updates/global_updates
 - Synchronn? re?im pou??v? odpov?? backendu pro aktu?ln? frame.
 - Cached re?im se dopln? v dal?? f?zi p?es posledn? validn? v?sledek.
 - Timeout mus? b?t kr?tk?, typicky 0.2 a? 0.5 s podle taktu linky.
+
+
+## Spreadsheet mapping workspace
+
+Aktu?ln? sm?r UI je Excel-like tabulka jako hlavn? pracovn? plocha a PEKAT Context JSON jako prav? zdrojov? panel. Drag-and-drop vytv??? `=PV(...)` bindingy a output mapping zapisuje vybran? bu?ky zp?t do `context_updates` nebo `global_updates`.
