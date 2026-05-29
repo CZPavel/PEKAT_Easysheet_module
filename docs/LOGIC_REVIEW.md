@@ -1,43 +1,44 @@
-# Kontrola logiky proti p?vodn? my?lence projektu
+# Kontrola logiky proti původní myšlence projektu
 
-## Co u? odpov?d? zad?n?
+## Co už odpovídá zadání
 
-- UI sm??uje k Excel-like pracovn? plo?e, ne k pouh?mu dashboardu.
-- Ka?d? PEKAT instance m??e m?t vlastn? z?lo?ku (`Camera_1`, `Camera_2`).
-- Existuje `Coordinator` z?lo?ka pro slu?ov?n? v?ce instanc?.
-- Context JSON je samostatn? prav? panel a slou?? jako zdroj prom?nn?ch.
-- Drag-and-drop z Contextu vkl?d? vazbu `=PV(...)`, ne statickou hodnotu.
-- Backend m? workbook model: `Workbook`, `Sheet`, `Cell`, `CellBinding`,
+- UI směřuje k Excel-like pracovní ploše, ne k pouhému dashboardu.
+- Každá PEKAT instance může mít vlastní záložku (`Camera_1`, `Camera_2`).
+- Existuje `Coordinator` záložka pro slučování více instancí.
+- Context JSON je samostatný pravý panel a slouží jako zdroj proměnných.
+- Drag-and-drop z Contextu vkládá vazbu `=PV(...)`, ne statickou hodnotu.
+- Backend má workbook model: `Workbook`, `Sheet`, `Cell`, `CellBinding`,
   `OutputMapping`, `Recipe`.
-- Z?kladn? vzorce jsou deterministick? a nespou?t? libovoln? Python/JS.
-- PEKAT Code bridge m? timeout a fallback, tak?e nem? blokovat FLOW neomezen?.
+- Základní vzorce jsou deterministické a nespouští libovolný Python/JS.
+- PEKAT Code bridge má timeout a fallback, takže nemá blokovat FLOW neomezeně.
 
-## Co bylo nutn? opravit
+## Co bylo nutné opravit
 
-- `/api/evaluate` p?vodn? pou??val jen jednoduch? MVP evaluator a ignoroval
-  workbook output mapping. Nyn? ukl?d? snapshot, sestav? dostupn? contexty,
-  vyhodnot? workbook a vrac? `context_updates`, `global_updates` i `control`.
-- PEKAT bridge p?vodn? aplikoval jen `context_updates`. Nyn? zapisuje i
+- `/api/evaluate` původně používal jen jednoduchý MVP evaluator a ignoroval
+  workbook output mapping. Nyní ukládá snapshot, sestaví dostupné contexty,
+  vyhodnotí workbook a vrací `context_updates`, `global_updates` i `control`.
+- PEKAT bridge původně aplikoval jen `context_updates`. Nyní zapisuje i
   `global_updates` do `context["global_data"]` nebo `context["globalData"]`.
-- Logick? funkce nyn? berou `#MISSING` jako nepravdivou hodnotu, aby chyb?j?c?
-  kamerov? data nemohla omylem proj?t jako `TRUE`.
+- Logické funkce nyní berou `#MISSING` jako nepravdivou hodnotu, aby chybějící
+  kamerová data nemohla omylem projít jako `TRUE`.
 
-## Co zat?m z?st?v? MVP omezen?
+## Co zatím zůstává MVP omezení
 
-- Grid nen? plnohodnotn? Excel; nepodporuje kop?rov?n? blok?, relativn? odkazy,
-  form?tov?n? bun?k ani XLSX import/export.
-- Output mapping zat?m nen? pln? u?ivatelsky editovateln? v UI, jen se zobrazuje
-  a lze jej spravovat p?es API.
-- Workbook je zat?m in-memory. Pro pr?ci mezi v?ce PC je konfigurace v k?du a
-  dokumentaci, ne v persistentn? SQLite datab?zi.
-- Chybov? stavy jsou dostupn? v modelu, ale UI je zat?m zobrazuje pouze
-  z?kladn?m obarven?m bu?ky.
+- Grid není plnohodnotný Excel; nepodporuje kopírování bloků, relativní odkazy,
+  formátování buněk ani XLSX import/export.
+- Output mapping zatím není plně uživatelsky editovatelný v UI, jen se zobrazuje
+  a lze jej spravovat přes API.
+- Workbook je zatím in-memory. Pro práci mezi více PC je konfigurace v kódu a
+  dokumentaci, ne v persistentní SQLite databázi.
+- Chybové stavy jsou dostupné v modelu, ale UI je zatím zobrazuje pouze
+  základním obarvením buňky.
 
-## Doporu?en? dal?? krok
+## Doporučený další krok
 
-1. P?idat editor output mappingu p??mo do UI.
-2. P?idat perzistenci workbooku do JSON/SQLite souboru.
-3. P?idat valid?tor workbooku p?ed nasazen?m do PEKAT FLOW.
-4. Roz???it Code bridge o re?imy `sync`, `cached`, `global_data_only`.
-5. P?idat test s re?ln?m exportem Context JSON z PEKATu, jakmile bude instance
-   dostupn?.
+1. Přidat editor output mappingu přímo do UI.
+2. Přidat perzistenci workbooku do JSON/SQLite souboru.
+3. Přidat validátor workbooku před nasazením do PEKAT FLOW.
+4. Rozšířit Code bridge o režimy `sync`, `cached`, `global_data_only`.
+5. Přidat test s reálným exportem Context JSON z PEKATu, jakmile bude instance
+   dostupná.
+

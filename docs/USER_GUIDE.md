@@ -1,22 +1,21 @@
-# U?ivatelsk? n?vod: PEKAT Easysheet Module
+# Uživatelský návod: PEKAT Easysheet Module
 
-## 1. Co aplikace d?l?
+## 1. Co aplikace dělá
 
-PEKAT Easysheet je extern? spreadsheetov? prost?ed? nad PEKAT VISION.
-U?ivatel pracuje s tabulkou podobnou Excelu, ale zdrojov? data nejsou ru?n?
-opisovan? ??sla. Data p?ich?zej? z PEKAT `Context` a `GlobalData`.
+PEKAT Easysheet je externí spreadsheetové prostředí nad PEKAT VISION. Uživatel
+pracuje s tabulkou podobnou Excelu, ale zdrojová data přicházejí z PEKAT
+`Context` a `GlobalData`.
 
-Z?kladn? tok:
+Základní tok:
 
 ```text
-PEKAT Context JSON -> Context Explorer -> bu?ka tabulky -> vzorec
+PEKAT Context JSON -> Context Explorer -> buňka tabulky -> vzorec
     -> output mapping -> context_updates / global_updates -> PEKAT FLOW
 ```
 
-Aplikace zat?m b??? i bez PEKATu p?es offline simulator. Simulator vytv???
-uk?zkov? Context JSON objekty pro `Camera_1`, `Camera_2` a `Coordinator`.
+Aplikace běží i bez PEKATu přes offline simulator.
 
-## 2. Spu?t?n? na tomto PC
+## 2. Spuštění
 
 Backend:
 
@@ -32,40 +31,38 @@ cd C:\PYTHON_test\PEKAT_Easysheet_modul\ui
 npm run dev
 ```
 
-Otev?i:
+Otevři:
 
 ```text
 http://127.0.0.1:5173/
 ```
 
-## 3. Prvn? pr?ce bez PEKAT instance
+## 3. První práce bez PEKAT instance
 
 1. Klikni **Tick frame + evaluate**.
 2. Backend vygeneruje demo Context pro kamery.
-3. Vpravo v panelu **PEKAT Context JSON** vyber `Camera_1` nebo `Camera_2`.
-4. P?et?hni vybranou hodnotu z Context stromu do libovoln? bu?ky.
-5. Do bu?ky se vlo?? vazba, nap??klad:
+3. Vpravo vyber `Camera_1` nebo `Camera_2`.
+4. Přetáhni hodnotu z Context stromu do buňky.
+5. Do buňky se vloží například:
 
 ```text
 =PV("Camera_1.context.measurements.diameter_mm")
 ```
 
-6. Znovu klikni **Tick frame + evaluate**.
-7. Tabulka se p?epo??t? a dole uvid?? `context_updates` a `global_updates`.
+6. Další klik na **Tick frame + evaluate** tabulku přepočítá.
+7. Dole uvidíš `context_updates` a `global_updates`.
 
-## 4. V?znam z?lo?ek
+## 4. Význam záložek
 
-- `Camera_1`, `Camera_2`: vstupn? listy pro jednotliv? PEKAT instance.
-- `Coordinator`: slu?uje hodnoty z v?ce kamer a d?l? master rozhodnut?.
-- `Recipes`: tabulkov? pohled na receptury a tolerance.
-- `Outputs`: p?ehled, kter? bu?ky se maj? zapisovat zp?t do PEKATu.
+- `Camera_1`, `Camera_2`: vstupní listy pro jednotlivé PEKAT instance.
+- `Coordinator`: slučuje hodnoty z více kamer a dělá master rozhodnutí.
+- `Recipes`: tabulkový pohled na receptury a tolerance.
+- `Outputs`: přehled, které buňky se zapisují zpět do PEKATu.
 
 ## 5. Drag-and-drop z Context JSON
 
-P?eta?en?m polo?ky se nevlo?? statick? hodnota. Vlo?? se vzorec `PV`, kter? se
-p?i dal?? evaluaci znovu na?te z aktu?ln?ho Contextu.
-
-P??klad:
+Přetažením položky se nevloží statická hodnota. Vloží se vzorec `PV`, který se
+při další evaluaci znovu načte z aktuálního Contextu.
 
 ```text
 Camera_1.context.result               -> =PV("Camera_1.context.result")
@@ -73,7 +70,7 @@ Camera_1.context.measurements.gap_mm  -> =PV("Camera_1.context.measurements.gap_
 Camera_1.global_data.recipe.active_id -> =PV("Camera_1.global_data.recipe.active_id")
 ```
 
-## 6. Podporovan? vzorce v MVP
+## 6. Podporované vzorce v MVP
 
 ```text
 =PV("Camera_1.context.result")
@@ -91,13 +88,11 @@ Camera_1.global_data.recipe.active_id -> =PV("Camera_1.global_data.recipe.active
 =AVERAGE(B2, B3)
 ```
 
-Z bezpe?nostn?ch d?vod? bu?ky nespou?t? libovoln? Python ani JavaScript.
-Nepodporovan? nebo chyb?j?c? hodnota se m? v dal??ch iterac?ch zobrazovat jako
-`#MISSING` nebo `#ERROR`.
+Buňky nespouští libovolný Python ani JavaScript.
 
-## 7. Output mapping zp?t do PEKATu
+## 7. Output mapping zpět do PEKATu
 
-Output mapping ??k?, kam se m? hodnota bu?ky propsat po vyhodnocen?:
+Output mapping říká, kam se má hodnota buňky propsat po vyhodnocení:
 
 ```text
 Coordinator!B2 -> context.spreadsheet.master_result
@@ -105,18 +100,18 @@ Coordinator!B3 -> context.spreadsheet.allow_branch_default
 Coordinator!B4 -> global_data.spreadsheet.reject_reason
 ```
 
-V PEKAT Code toolu bridge p?e?te odpov?? backendu a zap??e:
+PEKAT Code bridge zapisuje:
 
-- `context_updates` p??mo do `context`,
+- `context_updates` přímo do `context`,
 - `global_updates` do `context["global_data"]` nebo `context["globalData"]`,
 - `control.exit` do `context["exit"]`,
 - `control.override_result` do `context["result"]`.
 
-## 8. PEKAT Code tool zapojen?
+## 8. PEKAT Code tool zapojení
 
-1. Spus? backend.
-2. Do PEKAT FLOW vlo? Code tool na m?sto, kde m? spreadsheet rozhodovat.
-3. Vlo? skript `pekat_code_modules/spreadsheet_bridge_sync.py`.
+1. Spusť backend.
+2. Do PEKAT FLOW vlož Code tool na místo, kde má spreadsheet rozhodovat.
+3. Vlož skript `pekat_code_modules/spreadsheet_bridge_sync.py`.
 4. Nastav `module_item`:
 
 ```json
@@ -128,21 +123,10 @@ V PEKAT Code toolu bridge p?e?te odpov?? backendu a zap??e:
 }
 ```
 
-5. Navazuj?c? Conditional Gate m??e ??st nap??klad:
+Navazující Conditional Gate může číst:
 
 ```text
 context.spreadsheet.master_result
 context.spreadsheet.allow_branch_default
 ```
 
-## 9. P?enos na jin? PC
-
-```powershell
-git clone https://github.com/CZPavel/PEKAT_Easysheet_module.git
-cd PEKAT_Easysheet_module
-python -m pip install -e ".[dev]"
-cd ui
-npm install
-```
-
-Pak spus? backend a UI podle kapitoly 2.

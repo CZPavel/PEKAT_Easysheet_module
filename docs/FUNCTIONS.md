@@ -1,25 +1,25 @@
-# Vysv?tlen? funkc? aplikace
+# Vysvětlení funkcí aplikace
 
 ## PEKAT Context Explorer
 
-Prav? panel zobrazuje posledn? zn?m? Context JSON pro vybranou PEKAT instanci.
-V offline re?imu ho generuje simulator. V produk?n?m re?imu ho bude plnit Code
-bridge nebo HTTP ingest endpoint.
+Pravý panel zobrazuje poslední známý Context JSON pro vybranou PEKAT instanci.
+V offline režimu ho generuje simulator. V produkčním režimu ho bude plnit Code
+bridge nebo budoucí ingest endpoint.
 
 ## Spreadsheet grid
 
-Hlavn? plocha je workbook se z?lo?kami. Bu?ka m??e obsahovat:
+Hlavní plocha je workbook se záložkami. Buňka může obsahovat:
 
-- text nebo ??slo,
+- text nebo číslo,
 - boolean hodnotu `TRUE`/`FALSE`,
-- vzorec za??naj?c? `=`,
-- binding na PEKAT Context p?es `PV(...)`.
+- vzorec začínající `=`,
+- binding na PEKAT Context přes `PV(...)`.
 
 ## Binding funkce
 
 ### `PV(path)`
 
-Na?te hodnotu z context stromu.
+Načte hodnotu z context stromu.
 
 ```text
 =PV("Camera_1.context.result")
@@ -28,7 +28,7 @@ Na?te hodnotu z context stromu.
 
 ### `PV_COUNT(project_id, label)`
 
-Spo??t? objekty v `detectedRectangles` podle labelu.
+Spočítá objekty v `detectedRectangles` podle labelu.
 
 ```text
 =PV_COUNT("Camera_1", "Screw")
@@ -36,13 +36,13 @@ Spo??t? objekty v `detectedRectangles` podle labelu.
 
 ### `PV_EXISTS(project_id, label)`
 
-Vr?t? `TRUE`, pokud existuje alespo? jeden objekt dan?ho labelu.
+Vrátí `TRUE`, pokud existuje alespoň jeden objekt daného labelu.
 
 ```text
 =PV_EXISTS("Camera_2", "Defect")
 ```
 
-## Logick? funkce
+## Logické funkce
 
 ```text
 =IF(condition, value_if_true, value_if_false)
@@ -51,7 +51,7 @@ Vr?t? `TRUE`, pokud existuje alespo? jeden objekt dan?ho labelu.
 =NOT(A1)
 ```
 
-## Matematick? funkce
+## Matematické funkce
 
 ```text
 =ABS(A1)
@@ -62,9 +62,9 @@ Vr?t? `TRUE`, pokud existuje alespo? jeden objekt dan?ho labelu.
 =AVERAGE(A1, B1)
 ```
 
-## Odkazy na bu?ky
+## Odkazy na buňky
 
-Aktu?ln? MVP um? jednoduch? odkazy v r?mci listu a z?kladn? odkazy mezi listy:
+Aktuální MVP umí jednoduché odkazy v rámci listu a základní odkazy mezi listy:
 
 ```text
 =B2
@@ -73,7 +73,7 @@ Aktu?ln? MVP um? jednoduch? odkazy v r?mci listu a z?kladn? odkazy mezi listy:
 
 ## Write-back funkce
 
-V?sledn? bu?ka se p?es `OutputMapping` zap??e do odpov?di backendu:
+Výsledná buňka se přes `OutputMapping` zapíše do odpovědi backendu:
 
 ```json
 {
@@ -90,4 +90,5 @@ V?sledn? bu?ka se p?es `OutputMapping` zap??e do odpov?di backendu:
 }
 ```
 
-PEKAT Code bridge tyto hodnoty prom?tne zp?t do `context` a `global_data`.
+PEKAT Code bridge tyto hodnoty promítne zpět do `context` a `global_data`.
+
