@@ -7,6 +7,8 @@ from fastapi import APIRouter, HTTPException, status
 from backend.app.core.evaluator import SpreadsheetEvaluator
 from backend.app.core.storage import MemoryStore
 from backend.app.demo.simulator import DemoSimulator
+from backend.app.workbook.models import CellBinding, OutputMapping, Workbook, WorkbookEvaluateRequest, WorkbookEvaluateResponse
+from backend.app.workbook.service import WorkbookService
 from backend.app.models import (
     EvaluateRequest,
     EvaluateResponse,
@@ -22,6 +24,7 @@ router = APIRouter()
 store = MemoryStore()
 evaluator = SpreadsheetEvaluator()
 demo_simulator = DemoSimulator(store=store, evaluator=evaluator)
+workbook_service = WorkbookService()
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -60,10 +63,37 @@ def get_last_snapshot(project_id: str) -> SnapshotRecord:
 
 @router.post("/api/evaluate", response_model=EvaluateResponse)
 def evaluate(payload: EvaluateRequest) -> EvaluateResponse:
-    """Ulo?? snapshot a vr?t? deterministick? MVP v?sledek."""
+    """Ulo?? snapshot a vr?t? v?sledek workbooku pro PEKAT Code bridge."""
 
     store.save_snapshot(payload)
-    return evaluator.evaluate(payload)
+    contexts: dict[str, dict[str, object]] = {}
+    for project in store.list_projects():
+        snapshot = store.get_last_snapshot(project.project_id)
+        if snapshot is not None:
+            contexts[project.project_id] = {
+                "context": snapshot.context,
+                "global_data": snapshot.global_data,
+            }
+    contexts[payload.project_id] = {
+        "context": payload.context,
+        "global_data": payload.global_data,
+    }
+    workbook_result = workbook_service.evaluate(contexts)
+    fallback = evaluator.evaluate(payload)
+    context_updates = fallback.context_updates | workbook_result.context_updates
+    fallback_sheet = fallback.context_updates.get("spreadsheet")
+    workbook_sheet = workbook_result.context_updates.get("spreadsheet")
+    if isinstance(fallback_sheet, dict) and isinstance(workbook_sheet, dict):
+        context_updates["spreadsheet"] = fallback_sheet | workbook_sheet
+    global_updates = fallback.global_updates | workbook_result.global_updates
+    spreadsheet = context_updates.get("spreadsheet", {})
+    ok = bool(spreadsheet.get("master_result", fallback.ok)) if isinstance(spreadsheet, dict) else fallback.ok
+    return EvaluateResponse(
+        ok=ok,
+        context_updates=context_updates,
+        global_updates=global_updates,
+        control=workbook_result.control,
+    )
 
 
 @router.get("/api/projects", response_model=list[ProjectRecord])
@@ -92,3 +122,44 @@ def reset_demo() -> dict[str, object]:
     """Resetuje offline demo data do v?choz?ho stavu."""
 
     return demo_simulator.reset()
+
+
+@router.get("/api/workbooks/default", response_model=Workbook)
+def get_default_workbook() -> Workbook:
+    """Vr?t? default workbook pro spreadsheet UI."""
+    return workbook_service.get_default()
+
+@router.put("/api/workbooks/default", response_model=Workbook)
+def put_default_workbook(payload: Workbook) -> Workbook:
+    """Ulo?? default workbook konfiguraci."""
+    return workbook_service.replace_default(payload)
+
+@router.post("/api/workbooks/default/evaluate", response_model=WorkbookEvaluateResponse)
+def evaluate_default_workbook(payload: WorkbookEvaluateRequest) -> WorkbookEvaluateResponse:
+    """Vyhodnot? workbook nad dodan?mi PEKAT contexty."""
+    return workbook_service.evaluate(payload.contexts)
+
+@router.post("/api/workbooks/default/bindings", response_model=Workbook)
+def add_workbook_binding(payload: CellBinding) -> Workbook:
+    """P?id? Context?cell binding."""
+    return workbook_service.add_binding(payload)
+
+@router.post("/api/workbooks/default/output-mappings", response_model=Workbook)
+def add_workbook_output_mapping(payload: OutputMapping) -> Workbook:
+    """P?id? cell?Context/GlobalData mapping."""
+    return workbook_service.add_output_mapping(payload)
+
+@router.get("/api/context/{project_id}/tree")
+def get_context_tree(project_id: str) -> dict[str, object]:
+    """Vr?t? posledn? zn?m? demo/PEKAT Context jako strom pro drag-and-drop."""
+    snapshot = store.get_last_snapshot(project_id)
+    if snapshot is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Projekt {project_id!r} zat?m nem? Context snapshot.",
+        )
+    return {
+        "project_id": project_id,
+        "frame_id": snapshot.frame_id,
+        "tree": {"context": snapshot.context, "global_data": snapshot.global_data},
+    }

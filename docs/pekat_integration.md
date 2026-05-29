@@ -42,3 +42,8 @@ context.spreadsheet.outputs.master_result
 
 PEKAT Vision SDK dr??me jako volitelnou z?vislost `.[pekat]`. Backend MVP
 nevy?aduje SDK, proto?e prim?rn? integra?n? bod je Code tool volaj?c? REST API.
+
+
+## Write-back mapping
+
+Vybran? bu?ky workbooku se mapuj? na `context.spreadsheet.*`, `global_data.*` nebo `control.*`. PEKAT Code bridge pak vr?cen? `context_updates` zap??e do `context`, `global_updates` do perzistentn?ho stavu a `control.exit`/`control.override_result` pou?ije pro FLOW.

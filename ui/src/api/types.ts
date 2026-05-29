@@ -1,49 +1,11 @@
-export type SpreadsheetOutputs = {
-  master_result?: boolean;
-  allow_branch_default?: boolean;
-};
-
-export type SpreadsheetState = {
-  project_id: string;
-  frame_id: string;
-  mode: string;
-  last_update_ts: string;
-  result: boolean;
-  reason: string;
-  outputs: SpreadsheetOutputs;
-};
-
-export type Evaluation = {
-  ok: boolean;
-  context_updates: {
-    spreadsheet?: SpreadsheetState;
-  };
-  global_updates: Record<string, unknown>;
-  control: {
-    exit: boolean;
-    override_result: boolean | null;
-  };
-};
-
-export type DemoSnapshot = {
-  project_id: string;
-  frame_id: string;
-  timestamp: string;
-  mode: string;
-  context: Record<string, unknown>;
-  global_data: Record<string, unknown>;
-};
-
-export type DemoCamera = {
-  project_id: string;
-  name: string;
-  frame_index: number;
-  last_snapshot: DemoSnapshot | null;
-  last_evaluation: Evaluation | null;
-};
-
-export type DemoState = {
-  running: boolean;
-  tick_index: number;
-  cameras: DemoCamera[];
-};
+export type CellStatus = 'ok' | 'missing' | 'error';
+export type Cell = { address: string; raw: string | number | boolean | null; value: string | number | boolean | null; status: CellStatus; error?: string | null; };
+export type Sheet = { name: string; rows: number; cols: number; cells: Record<string, Cell>; };
+export type CellBinding = { sheet_name: string; cell: string; source_path: string; formula?: string | null; };
+export type OutputMapping = { sheet_name: string; cell: string; target: string; target_type: 'context' | 'global_data' | 'control'; };
+export type Workbook = { workbook_id: string; version: string; updated_at: string; sheets: Sheet[]; bindings: CellBinding[]; output_mappings: OutputMapping[]; };
+export type DemoSnapshot = { project_id: string; frame_id: string; timestamp: string; mode: string; context: Record<string, unknown>; global_data: Record<string, unknown>; };
+export type DemoCamera = { project_id: string; name: string; frame_index: number; last_snapshot: DemoSnapshot | null; last_evaluation: any | null; };
+export type DemoState = { running: boolean; tick_index: number; cameras: DemoCamera[]; };
+export type ContextTree = { project_id: string; frame_id: string; tree: { context: Record<string, unknown>; global_data: Record<string, unknown>; }; };
+export type WorkbookEvaluateResponse = { workbook: Workbook; context_updates: Record<string, unknown>; global_updates: Record<string, unknown>; control: Record<string, unknown>; };
